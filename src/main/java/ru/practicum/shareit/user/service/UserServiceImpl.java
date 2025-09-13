@@ -1,7 +1,8 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.ConflictException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.exception.ValidationException;
@@ -11,6 +12,7 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,6 +21,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    @Transactional
     public UserDto createUser(UserDto userDto) {
         validateUser(userDto);
         checkEmailUniqueness(userDto.getEmail(), null);
@@ -30,6 +33,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto updateUser(Long userId, UserDto userDto) {
         User existingUser = getUserById(userId); // Проверка существования пользователя
 
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void deleteUser(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserNotFoundException("Пользователь с ID " + userId + " не найден");
@@ -73,11 +78,8 @@ public class UserServiceImpl implements UserService {
     }
 
     private User getUserById(Long userId) {
-        User user = userRepository.findById(userId);
-        if (user == null) {
-            throw new UserNotFoundException("Пользователь с ID " + userId + " не найден");
-        }
-        return user;
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с ID " + userId + " не найден"));
     }
 
     private void validateUser(UserDto userDto) {
@@ -93,8 +95,16 @@ public class UserServiceImpl implements UserService {
     }
 
     private void checkEmailUniqueness(String email, Long excludeUserId) {
-        if (userRepository.existsByEmail(email, excludeUserId)) {
-            throw new ConflictException("Пользователь с email " + email + " уже существует");
+        if (excludeUserId == null) {
+            Optional<User> existingUser = userRepository.findByEmail(email);
+            if (existingUser.isPresent()) {
+                throw new ConflictException("Пользователь с email " + email + " уже существует");
+            }
+        } else {
+            boolean exists = userRepository.existsByEmailAndIdNot(email, excludeUserId);
+            if (exists) {
+                throw new ConflictException("Пользователь с email " + email + " уже существует");
+            }
         }
     }
 }
