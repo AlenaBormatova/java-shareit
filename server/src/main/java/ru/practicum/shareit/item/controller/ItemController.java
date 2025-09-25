@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.HttpHeadersConstants;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemDtoWithBookings;
@@ -17,14 +18,14 @@ public class ItemController {
 
     @PostMapping
     public ItemDto createItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @RequestBody ItemDto itemDto) {
         return itemService.createItem(ownerId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentDto addComment(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long itemId,
             @RequestBody CommentDto commentDto) {
         return itemService.addComment(userId, itemId, commentDto);
@@ -32,7 +33,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ItemDto updateItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @PathVariable Long itemId,
             @RequestBody ItemDto itemDto) {
         return itemService.updateItem(ownerId, itemId, itemDto);
@@ -40,14 +41,14 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ItemDtoWithBookings getItem(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long itemId) {
         return itemService.getItemWithBookings(itemId, userId);
     }
 
     @GetMapping
     public List<ItemDtoWithBookings> getUserItems(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId) {
         return itemService.getUserItemsWithBookings(ownerId);
     }
 
@@ -58,7 +59,7 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public void deleteItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @PathVariable Long itemId) {
         itemService.deleteItem(ownerId, itemId);
     }

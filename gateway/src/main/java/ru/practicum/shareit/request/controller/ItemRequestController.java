@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.HttpHeadersConstants;
 import ru.practicum.shareit.request.client.ItemRequestClient;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
 
@@ -19,20 +20,20 @@ public class ItemRequestController {
 
     @PostMapping
     public ResponseEntity<Object> createRequest(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @Valid @RequestBody ItemRequestDto itemRequestDto) {
         return itemRequestClient.createRequest(userId, itemRequestDto);
     }
 
     @GetMapping
     public ResponseEntity<Object> getUserRequests(
-            @RequestHeader("X-Sharer-User-Id") Long userId) {
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId) {
         return itemRequestClient.getUserRequests(userId);
     }
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllRequests(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size) {
         return itemRequestClient.getAllRequests(userId, from, size);
@@ -40,7 +41,7 @@ public class ItemRequestController {
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getRequestById(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long requestId) {
         return itemRequestClient.getRequestById(userId, requestId);
     }

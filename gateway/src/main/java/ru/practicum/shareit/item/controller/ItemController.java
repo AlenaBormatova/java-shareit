@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.constants.HttpHeadersConstants;
 import ru.practicum.shareit.item.client.ItemClient;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -20,14 +21,14 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<Object> createItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @Valid @RequestBody ItemDto itemDto) {
         return itemClient.createItem(ownerId, itemDto);
     }
 
     @PostMapping("/{itemId}/comment")
     public ResponseEntity<Object> addComment(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long itemId,
             @Valid @RequestBody CommentDto commentDto) {
         return itemClient.addComment(userId, itemId, commentDto);
@@ -35,7 +36,7 @@ public class ItemController {
 
     @PatchMapping("/{itemId}")
     public ResponseEntity<Object> updateItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @PathVariable Long itemId,
             @Valid @RequestBody ItemDto itemDto) {
         return itemClient.updateItem(ownerId, itemId, itemDto);
@@ -43,14 +44,14 @@ public class ItemController {
 
     @GetMapping("/{itemId}")
     public ResponseEntity<Object> getItem(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long itemId) {
         return itemClient.getItem(userId, itemId);
     }
 
     @GetMapping
     public ResponseEntity<Object> getUserItems(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId) {
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId) {
         return itemClient.getUserItems(ownerId);
     }
 
@@ -64,7 +65,7 @@ public class ItemController {
 
     @DeleteMapping("/{itemId}")
     public ResponseEntity<Object> deleteItem(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @PathVariable Long itemId) {
         return itemClient.deleteItem(ownerId, itemId);
     }

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.client.BookingClient;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.model.BookingState;
+import ru.practicum.shareit.constants.HttpHeadersConstants;
 
 @RestController
 @RequestMapping(path = "/bookings")
@@ -20,14 +21,14 @@ public class BookingController {
 
     @PostMapping
     public ResponseEntity<Object> createBooking(
-            @RequestHeader("X-Sharer-User-Id") Long bookerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long bookerId,
             @Valid @RequestBody BookingRequestDto bookingRequestDto) {
         return bookingClient.createBooking(bookerId, bookingRequestDto);
     }
 
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> updateBookingStatus(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @PathVariable Long bookingId,
             @RequestParam Boolean approved) {
         return bookingClient.updateBookingStatus(ownerId, bookingId, approved);
@@ -35,14 +36,14 @@ public class BookingController {
 
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> getBookingById(
-            @RequestHeader("X-Sharer-User-Id") Long userId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long userId,
             @PathVariable Long bookingId) {
         return bookingClient.getBookingById(userId, bookingId);
     }
 
     @GetMapping
     public ResponseEntity<Object> getUserBookings(
-            @RequestHeader("X-Sharer-User-Id") Long bookerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long bookerId,
             @RequestParam(defaultValue = "ALL") BookingState state,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size) {
@@ -51,7 +52,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public ResponseEntity<Object> getOwnerBookings(
-            @RequestHeader("X-Sharer-User-Id") Long ownerId,
+            @RequestHeader(HttpHeadersConstants.USER_ID_HEADER) Long ownerId,
             @RequestParam(defaultValue = "ALL") BookingState state,
             @RequestParam(defaultValue = "0") @PositiveOrZero Integer from,
             @RequestParam(defaultValue = "10") @Positive Integer size) {
